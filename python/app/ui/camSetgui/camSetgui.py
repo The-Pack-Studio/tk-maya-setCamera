@@ -209,25 +209,20 @@ class Example(QtGui.QWidget):
              
     def queryDataBaseShotgun(self, fieldQueryDict = {} ) :
         
-        try :
-            from shotgun_api3 import Shotgun
-        except :
-            import sys
-            sys.path.append('\\\\server01\\shared\\sharedPython2.6\\site-packages_win64\\')
-            from shotgun_api3 import Shotgun
-        
-        SERVER_PATH = "https://nozon.shotgunstudio.com"
-        SCRIPT_NAME = 'CamQuery'     
-        SCRIPT_KEY = '9c3d3ff0e384e8312328164f337bd62199ee19651c2e8ad44dbd85e98f78ebff'
-        
-        print "Make shotgun connection",
-        sg = Shotgun(SERVER_PATH, SCRIPT_NAME, SCRIPT_KEY)
-    
-        print "to query shotgun camera datas."
+
+        maya_scene_path = cmds.file(query=True, sn=True)
+
+        if not maya_scene_path:
+            warning = "Please save your scene first."
+            warnDialog = cmds.confirmDialog(title='Scene', message=warning, button=['ok'])
+            return
+
+        tk = sgtk.sgtk_from_path(maya_scene_path)
+
+
         self.cameraDataDict = {}
     
-    
-        for cameraData in sg.find("CustomNonProjectEntity03",[], ["code"]+fieldQueryDict.keys() ) :
+        for cameraData in tk.shotgun.find("CustomNonProjectEntity03",[], ["code"]+fieldQueryDict.keys() ) :
             self.cameraDataDict[ cameraData["code"] ]={}
     
             for sg_field in fieldQueryDict.keys() :
@@ -235,6 +230,4 @@ class Example(QtGui.QWidget):
                     self.cameraDataDict[ cameraData["code"] ][fieldQueryDict[sg_field] ] = cameraData[sg_field]
     
         return self.cameraDataDict
-            
-
 
