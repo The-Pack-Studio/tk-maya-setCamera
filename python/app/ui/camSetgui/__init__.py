@@ -1,1 +1,1 @@
-import camSetgui
+from . import camSetgui

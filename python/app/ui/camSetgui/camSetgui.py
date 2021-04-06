@@ -9,7 +9,7 @@
 #>import maya_tools.sg_cameraPreset 
 #>maya_tools.sg_cameraPreset.launch()
 
-
+from __future__ import print_function
 
 
 try :
@@ -79,7 +79,7 @@ class WidgetCamera(QtGui.QWidget):
         comboLayout = QtGui.QHBoxLayout()
         cameraNameLabelQ          = QtGui.QLabel("Camera Name : ")
         self.cameraNameComboBoxQ  = QtGui.QComboBox()
-        self.cameraNameComboBoxQ.addItems(cameraDataDict.keys())
+        self.cameraNameComboBoxQ.addItems(list(cameraDataDict.keys()))
         
         comboLayout.addWidget(cameraNameLabelQ)
         comboLayout.addWidget(self.cameraNameComboBoxQ)
@@ -122,11 +122,11 @@ class WidgetCamera(QtGui.QWidget):
     def fillLayout(self, layoutQ, cameraData):
         maxAttr = ""
         self.dynamicWidgetList = []
-        for attr in  cameraData.keys() :
+        for attr in list(cameraData.keys()) :
             if len(attr) > len(maxAttr) :
                 maxAttr=attr
       
-        for attr in  cameraData.keys() :
+        for attr in list(cameraData.keys()) :
             dynWidgetQ = WidgetAttribut(maxAttr, attr, str(cameraData[attr]))
             layoutQ.addWidget(dynWidgetQ)
             self.dynamicWidgetList.append(dynWidgetQ)
@@ -142,8 +142,8 @@ class WidgetCamera(QtGui.QWidget):
                 cmds.setAttr(str(self.editCameraFieldQ.text()) +"."+param, float(value) )
             except :
                 
-                print "Can't set to : '"+ self.editCameraFieldQ.text() +"."+param + "' value  '"  +   str(value)  +"'"
-                print traceback.format_exc()   
+                print("Can't set to : '"+ self.editCameraFieldQ.text() +"."+param + "' value  '"  +   str(value)  +"'")
+                print(traceback.format_exc())   
 
     ############## SLOTS ##############
         
@@ -198,7 +198,7 @@ class Example(QtGui.QWidget):
             self.applyButtonQ.clicked.connect(self.cameraWidget.applyValues)
             self.show()
         except :
-            print traceback.format_exc()
+            print(traceback.format_exc())
 
     def openWebLink(self, event ):
         import webbrowser
@@ -222,10 +222,10 @@ class Example(QtGui.QWidget):
 
         self.cameraDataDict = {}
     
-        for cameraData in tk.shotgun.find("CustomNonProjectEntity03",[], ["code"]+fieldQueryDict.keys() ) :
+        for cameraData in tk.shotgun.find("CustomNonProjectEntity03",[], ["code"]+list(fieldQueryDict.keys()) ) :
             self.cameraDataDict[ cameraData["code"] ]={}
     
-            for sg_field in fieldQueryDict.keys() :
+            for sg_field in list(fieldQueryDict.keys()) :
                 if cameraData[sg_field] :
                     self.cameraDataDict[ cameraData["code"] ][fieldQueryDict[sg_field] ] = cameraData[sg_field]
     
